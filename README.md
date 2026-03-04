@@ -3,7 +3,6 @@
 This repository contains a Monte Carlo scale-up model for **germicidal UV (GUV) lamps** and **repurposed fluorescent lamps**.  
 The model estimates how quickly global clean air delivery rate (CADR) can ramp up and compares it to CADR requirements for vital workers.
 
-The codebase follows ALLFED's recommended project structure (`src/`, `scripts/`, `data/`, `results/`, `docs/`) and is fully tested and documented via GitHub Actions.
 
 ---
 
@@ -71,13 +70,6 @@ conda env create -f environment.yml
 conda activate guv-scaleup-model
 ```
 
-The environment file installs:
-
-- Core stack: **numpy**, **pandas**, **scipy**, **matplotlib**.
-- Testing: **pytest**.
-- Docs: **mkdocs**, **mkgendocs**, **pyyaml**.
-- Editable install of this package (`pip install -e .`).
-
 ---
 
 ## How to run the model
@@ -110,59 +102,8 @@ The script `src/run_analysis.py` runs the full analysis from a YAML configuratio
 
 #### 1. Create a config file
 
-Create `analysis_config.yml` in the **repository root** (next to `environment.yml`), for example:
+Modify `analysis_config.yml` in the **repository root** (next to `environment.yml`) to change parameters.
 
-```yaml
-n_sims: 1000
-months: 6
-confidence_interval: 90
-
-uv:
-  global_market_low: 6.3e8
-  global_market_high: 5.0e9
-  percent_usable_low: 0.60
-  percent_usable_high: 0.90
-  percent_of_annual_low: 0.5/12
-  percent_of_annual_high: 1/12
-  cost_per_unit_low: 100
-  cost_per_unit_high: 700
-  cadr_per_unit_low: 100
-  cadr_per_unit_high: 500
-  growth:
-    utilization_start: 1.0
-    utilization_end: 1.0
-    utilization_ramp_months: 3
-    additional_annual_production: 1/12
-    repurposed_ramp_months: 1
-    repurposed_annual_production: 3/12
-
-fluoro:
-  global_market_low: 2.8e9
-  global_market_high: 7.9e9
-  percent_usable_low: 0.60
-  percent_usable_high: 0.90
-  cost_per_unit_low: 1
-  cost_per_unit_high: 3
-  growth:
-    utilization_start: 0.0
-    utilization_end: 0.7
-    utilization_ramp_months: 3
-    additional_annual_production: 1/12
-    repurposed_ramp_months: 0
-    repurposed_annual_production: 0
-
-requirement:
-  ashrae_low: 35*5
-  ashrae_high: 45*5
-  vital_workers_low: 0.5e9
-  vital_workers_high: 1e9
-
-outputs:
-  csv_path: analysis_summary.csv
-  png_path: uv_fluoro_ramp.png
-```
-
-You can change any of these values to explore different scenarios (e.g. more months, different utilization ramps, different vital worker counts).
 
 #### 2. Run the analysis
 
