@@ -1,147 +1,228 @@
-# ALLFED-Repository-Template
+## GUV scale-up model
 
-If this is the first time you want to use this template, please go through the [Github training](https://github.com/allfed/Github-Training-Repository/blob/main/README.md) first. This will give you the neccesary background knowledge to understand what is happening here. 
+This repository contains a Monte Carlo scale-up model for **germicidal UV (GUV) lamps** and **repurposed fluorescent lamps**.  
+The model estimates how quickly global clean air delivery rate (CADR) can ramp up and compares it to CADR requirements for vital workers.
 
-## How to use this template
-Use this as template when you start a new project by clicking "Use this template" in the top right.
+The codebase follows ALLFED's recommended project structure (`src/`, `scripts/`, `data/`, `results/`, `docs/`) and is fully tested and documented via GitHub Actions.
 
-Then follow all the descriptions below. 
+---
 
-## ALLFED Python Style Guide
-All code written for ALLFED should follow the [PEP 8 Style Guide for Python](https://peps.python.org/pep-0008/). Especially important are:
-* Keep the code well documented
-* Every function needs a docstring in this form:
+## What this model does
+
+- **Goal**: Estimate how quickly GUV and repurposed fluorescent lamps can ramp up to meet CADR needs for vital workers during a severe pandemic scenario.
+- **Core components**:
+  - **Monte Carlo sampling** of:
+    - Global markets for UV and fluorescent lamps.
+    - Usable fractions of those markets.
+    - Costs per unit and CADR per unit.
+  - **Scale-up dynamics** (`src/scale_up_model.py`):
+    - Factory utilization ramp-up.
+    - Additional production and (optional) repurposing.
+  - **Outputs**:
+    - Time series of CADR for UV and repurposed fluorescent lamps.
+    - Comparison to CADR requirements for vital workers.
+    - Summary CSV and publication-ready plot.
+
+---
+
+## Repository structure
+
+- **`src/`**
+  - **`mc_distributions.py`**: Monte Carlo sampling helpers (normal, lognormal, GPD).
+  - **`scale_up_model.py`**: Growth model for CADR production over time.
+  - **`plotter.py`**: Plotting utilities for UV vs requirement ramp-up.
+  - **`run_analysis.py`**: Command-line entry point that runs the full analysis from a YAML config, saving CSV and PNG results.
+- **`scripts/`**
+  - **`estimate_scaleup.ipynb`**: Walkthrough notebook mirroring the main analysis step by step.
+- **`results/`**
+  - Default output location for CSVs and figures produced by `run_analysis.py` and the notebook.
+- **`docs/`**
+  - MkDocs-based documentation (auto-generated via GitHub Actions when configured).
+
+---
+
+## Installation
+
+### 1. Prerequisites
+
+- **conda** (or **mamba**) installed (e.g. via Miniconda or Miniforge).
+- Git.
+
+### 2. Clone the repository
+
+```bash
+git clone https://github.com/ALLFED/guv-scaleup-model.git
+cd guv-scaleup-model
 ```
-def count_line(f, line):
-    """
-    Counts the number of times a line occurs. Case-sensitive.
 
-    Arguments:
-        f (file): the file to scan
-        line (str): the line to count
+### 3. Create and activate the environment
 
-    Returns:
-        int: the number of times the line occurs.
-    """
+Using **mamba** (recommended for speed):
+
+```bash
+mamba env create -f environment.yml
+conda activate guv-scaleup-model
 ```
-* Write [decoupled code](https://goodresearch.dev/decoupled.html), e.g. Functions should do exactly one thing and be as short as possible
-* Naming conventions:
-  - Snake case for variables and module: variable_name, my_module.py
-  - Camel case for class name: MyClass
-  - Camel case with spaces for jupyter notebook: Analyze Brain Data.ipynb
-* Delete dead code! Don't outcomment code you don't use anymore, but delete it instead. If you need to find it again, that's what we have git for. 
-* Use Jupyter Notebooks only for explanations and visualization. The actual programming should be happening in `.py` files. 
-* This repository is automatically set up with Github Actions/[Lint Action](https://github.com/marketplace/actions/lint-action) that will format your code using black and check for problems with flake8 ([without E203](https://github.com/psf/black/blob/06ccb88bf2bd35a4dc5d591bb296b5b299d07323/docs/guides/using_black_with_other_tools.md#flake8)). If either of them fails, you will not be able to merge your files unless you fix it. If this creates problem you cannot solve contact: florian@allfed.info
-* You can deactivate the branch protection that makes sure that only correct and styled code can be merged, but it is not recommended. 
 
+Using **conda**:
 
-To make this easier you can use linter (auto-formatter) that change your code to be formatted in PEP 8 when you safe it. E.g. [here for Spyder](https://stackoverflow.com/questions/51463223/how-to-use-pep8-module-using-spyder) or [VS Code](https://code.visualstudio.com/docs/python/linting). 
+```bash
+conda env create -f environment.yml
+conda activate guv-scaleup-model
+```
+
+The environment file installs:
+
+- Core stack: **numpy**, **pandas**, **scipy**, **matplotlib**.
+- Testing: **pytest**.
+- Docs: **mkdocs**, **mkgendocs**, **pyyaml**.
+- Editable install of this package (`pip install -e .`).
+
+---
+
+## How to run the model
+
+You can run the model either via the **notebook** or via the **command-line entry point**.
+
+### Option 1: Notebook walkthrough
+
+1. Activate the environment:
+
+   ```bash
+   conda activate guv-scaleup-model
+   ```
+
+2. Start Jupyter (or VS Code, or your preferred IDE) and open:
+
+   - `scripts/estimate_scaleup.ipynb`
+
+3. Run all cells from top to bottom.  
+   The notebook will:
+
+   - Sample parameters.
+   - Compute baseline CADR.
+   - Run the growth model for UV and repurposed fluorescent lamps.
+   - Plot supply vs CADR requirement over time.
+
+### Option 2: Command-line analysis (`src/run_analysis.py`)
+
+The script `src/run_analysis.py` runs the full analysis from a YAML configuration file and writes outputs to the `results/` folder.
+
+#### 1. Create a config file
+
+Create `analysis_config.yml` in the **repository root** (next to `environment.yml`), for example:
+
+```yaml
+n_sims: 1000
+months: 6
+confidence_interval: 90
+
+uv:
+  global_market_low: 6.3e8
+  global_market_high: 5.0e9
+  percent_usable_low: 0.60
+  percent_usable_high: 0.90
+  percent_of_annual_low: 0.5/12
+  percent_of_annual_high: 1/12
+  cost_per_unit_low: 100
+  cost_per_unit_high: 700
+  cadr_per_unit_low: 100
+  cadr_per_unit_high: 500
+  growth:
+    utilization_start: 1.0
+    utilization_end: 1.0
+    utilization_ramp_months: 3
+    additional_annual_production: 1/12
+    repurposed_ramp_months: 1
+    repurposed_annual_production: 3/12
+
+fluoro:
+  global_market_low: 2.8e9
+  global_market_high: 7.9e9
+  percent_usable_low: 0.60
+  percent_usable_high: 0.90
+  cost_per_unit_low: 1
+  cost_per_unit_high: 3
+  growth:
+    utilization_start: 0.0
+    utilization_end: 0.7
+    utilization_ramp_months: 3
+    additional_annual_production: 1/12
+    repurposed_ramp_months: 0
+    repurposed_annual_production: 0
+
+requirement:
+  ashrae_low: 35*5
+  ashrae_high: 45*5
+  vital_workers_low: 0.5e9
+  vital_workers_high: 1e9
+
+outputs:
+  csv_path: analysis_summary.csv
+  png_path: uv_fluoro_ramp.png
+```
+
+You can change any of these values to explore different scenarios (e.g. more months, different utilization ramps, different vital worker counts).
+
+#### 2. Run the analysis
+
+From the **repository root**:
+
+```bash
+conda activate guv-scaleup-model
+python -m src.run_analysis --config analysis_config.yml
+```
+
+If you omit `--config`, the script defaults to `analysis_config.yml` in the repo root.
+
+---
+
+## Outputs
+
+By default, the command-line analysis writes to the `results/` folder:
+
+- **CSV**: `results/analysis_summary.csv`
+  - Columns include:
+    - `month`
+    - `uv_median`, `uv_p_lower`, `uv_p_upper`
+    - `fluoro_median`, `fluoro_p_lower`, `fluoro_p_upper`
+    - `median_cadr_requirement`, `cadr_requirement_p_lower`, `cadr_requirement_p_upper`
+- **PNG**: `results/uv_fluoro_ramp.png`
+  - High-resolution figure (configured at **300 dpi** in the plotting utility) suitable for reports or papers.
+
+You can change filenames in the YAML config under the `outputs` section.
+
+---
 
 ## Testing
-We want to create reliable code. This means, as much of the code needs to be automatically tested, to make sure that everything runs as intended. Therefore, every reasonable function should have some kind of `assert` that tests if it works. We use pytest [pytest](https://docs.pytest.org/en/7.1.x/) as our main test suit. All tests that you put in the tests folder in here are automatically run every time you push code. You can read more about testing [here](https://goodresearch.dev/testing.html). To adapt the testing.yml to your repository you just have to adapt the requirements in requirements.txt. Everything else should work on its own. You can find an example of how a test file should look like in the tests folder. Once you go the testing set up, also make sure to add the testing badge to the readme of your repository. Simply change the URL to your repository in this badge:
 
-![Testing](https://github.com/allfed/allfed-repository-template/actions/workflows/testing.yml/badge.svg)
+- All tests live in the `tests/` directory and use **pytest**.
+- To run the test suite locally (with the environment activated):
 
-You don't have to test every possible function. Just make sure that those are tested where you are doing custom analysis. 
-
-## Documenting in small projects
-Documenting your code is only one part of the documentation we want to create. Every larger repository needs:
-* a readme file that explains what the repository is for and how it is organized, which should contain:
-    - A one-sentence description of your project
-    - A longer description of your project
-    - Installation instructions
-    - General orientation to the codebase and usage instructions
-    - Links to papers
-    - Links to extended docs
-    - License
-
-* a tutorial Jupyter Notebook to explain how the repository is supposed to be used
-
-
-## Documenting in big projects
-All the things for the small projects, but also:
-* An automated documentation via Gitub Actions. This is already set up in this repository. Is uses the code from [this post](https://towardsdatascience.com/easily-automate-and-never-touch-your-documentation-again-a98c91ce1b95) and combines it with [this one](https://blog.elmah.io/deploying-a-mkdocs-documentation-site-with-github-actions/). It also is setup that it will only look for python files in the src folder. So, make sure that everything is in there (you can changes this behavior in the main function of `automate_mkdocs.py`). To get it running do the following
-    * Change the names in `mkgendocs.yml` and `mkdocs.yml` so they fit your repository
-    * go to Settings --> Pages 
-    * select deploy from a branch as source
-    * select gh-pages as branch at root (for this option to pop up the `docs.yml` file has to have run succesfully at least once, this should happen when you push anything in your repository)
-    * The end result will look something [like this](https://florianjehn.github.io/Seaweed-Growth-Model/)
-    * The automated documentation part is still a bit wip, if you run into problems contact florian@allfed.info
-* Create a [visual representation](https://goodresearch.dev/_images/pcbi.1007358.g002.PNG_L.png) of how the different files interact with each other
-
-## Issues
-Every time you come across a problem that you do not plan to fix in the next day, please open an issue in the repository to make sure that it does not get lost. This also allows you to assign tasks to other coders on the team. For a short intro to issues, see [here](https://www.youtube.com/watch?v=TKJ4RdhyB5Y).
-
-## Making the repository citable
-All ALLFED repositories should be citable by release. For this we use [Zenodo](https://zenodo.org/). This has to be activated by an Admin. Once you have a manuscript where you need to cite the repository let them know and they will activate it. This will also create a doi badge, which should be included in the readme, like this:
-
----
-
-
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6865646.svg)](https://doi.org/10.5281/zenodo.6865646)
-
-
----
-
-## ALLFED Plotting Style
-All plots created for ALLFED should look and feel the same. You can activate the ALLFED style by simply starting your code with:
-
-`plt.style.use("https://raw.githubusercontent.com/allfed/ALLFED-matplotlib-style-sheet/main/ALLFED.mplstyle")`
-
-If you need to create your plots in ALLFED style, while being offline just download the file and change the path to local. 
-
-### Map Projection
-
-For published maps we use the [Winkel Tripel projection](https://en.wikipedia.org/wiki/Winkel_tripel_projection). You can use it by reprojecting the CRS of your data on geopandas to `+proj=wintri`. The function in the example below can be used to include a border on your map, and modify the ALLFED plotting style to make sense for a map plot.
-
-
-```python
-# Add border to map, remove gridlines and ticks (after activating ALLFED style)
-def plot_winkel_tripel_map(ax): 
-    border_geojson = gpd.read_file('https://raw.githubusercontent.com/ALLFED/ALLFED-map-border/main/border.geojson')
-    border_geojson.plot(ax=ax, edgecolor='black', linewidth=0.1, facecolor='none')
-    ax.set_axis_off()
-
-world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres')) # Example world dataset
-world = world.to_crs('+proj=wintri') # Change projection to Winkel Tripel
-
-ax = world.plot() # Plot the map
-plot_winkel_tripel_map(ax) # Modify style and add border
-plt.show()
+```bash
+pytest
 ```
 
-The result should look like this:
+GitHub Actions (`.github/workflows/testing.yml`) automatically run the tests on every push and pull request to `main`.
 
-<img src="https://raw.githubusercontent.com/JuanesLamilla/winkel-tripel-border/main/winkel_tripel_map.png" width=50% height=50%>
+---
 
-Important note: The Winkel Tripel projection is a compromise projection used purely for visuals. It is not equal-area, conformal, or equidistant. This means that the areas, angles, and distances are not preserved. We use this projection to make our maps as easy to read as possible, but if you need to do any calculations on the map, you need to use a different appropriate projection to get the correct results. To learn more about map projections with geopandas, see [here](https://geopandas.org/en/v0.14.0/docs/user_guide/projections.html).
-   
-## Project Skeleton
-This repository already has the folder structure we use for repositories. Every folder has an additional readme, to tell you what needs to go in there.
+## Documentation
 
-## Making the repository a pip installable Python package
-For some repositories it makes sense to make them installable via pip (e.g. a model we want to share easily). In this case you can use the explanation [here](https://goodresearch.dev/setup.html). This repository already contains a setup.py that can be used for that. If you want to install it to your local environment just run `pip install -e .` while being in the folder that contains setup.py.
+MkDocs-based documentation is set up via GitHub Actions (`.github/workflows/docs.yml`).  
+Once configured with GitHub Pages, pushes to `main` will:
 
-## Environment
-Every ALLFED project is run in its own virtual environment. Therefore, every project needs an `environment.yml` file. The one in this repository is only an example and should not be used for any actual project. To create and organize virtual environments we use [conda](https://docs.conda.io/en/latest/miniconda.html). 
+- Regenerate API docs from Python docstrings.
+- Build the MkDocs site.
+- Deploy it to the `gh-pages` branch.
 
-Please make sure to include version numbers in your `environment.yml`. Otherwise it will be really annoying to get it to run again in the future. 
+For now, the main user-facing documentation is this `README` plus the example notebook in `scripts/`.
 
-## Requirements
-Every ALLFED project needs a requirements file that specifies what packages are needed to run the project. You can find an example file in the repository. If you use a lot of packages you can use [pipreqg](https://allfed.github.io/Seaweed-Growth-Model/) to find them all.  
+---
 
 ## License
-ALLFED publishes its code in Open Access. For this we use the [**Apache 2.0 License**](https://www.planetcrust.com/what-does-apache-2-0-license-mean). This license allows very free use of the code, but makes sure that ALLFED cannot be sued if something goes wrong with the code. The license template in this repository needs to be adapted when a new project is created. You can include the following license badge in your readme:
 
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+This project is released under the **Apache 2.0 License**.  
+See the `LICENSE` file in this repository or the [Apache 2.0 overview](https://opensource.org/licenses/Apache-2.0) for details.
 
-## Gitignore
-The [.gitignore file](https://git-scm.com/docs/gitignore) is the default one for Python. Make sure you change it when using another programming language. 
-
-## Further reading/Misc
-* [Best Practices for Scientific Computing](https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1001745)
-* [General course to get to know the Python skills needed to the work at ALLFED](https://github.com/florianjehn/python-for-environmental-science)
-* We are using [Github Copilot](https://github.com/features/copilot) to write faster and cleaner code. If you would also like to have a license contact finance@allfed.info
-
-## Acknowledgment
-This is strongly based on the ["Good Research Code Handbook"](https://goodresearch.dev/index.html). If something here confuses you, it makes sense to read about it there. Pretty good explanations. 
+You are free to use, modify, and redistribute the code, but ALLFED and the authors assume no liability for its use.

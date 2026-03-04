@@ -33,21 +33,23 @@ def growth_model(
         utilization_start (float): Starting utilization (0-1). Default 0.7.
         utilization_end (float): Ending utilization (0-1). Default 1.0.
         utilization_ramp_months (int): Months over which utilization ramps up. Default 3.
-        additional_annual_production (float): Additional production per month as fraction of annual. Default 1/12.
+        additional_annual_production (float): Additional production per month as
+            fraction of annual. Default 1/12.
         repurposed_ramp_months (int): Months over which repurposed production ramps up. Default 1.
-        repurposed_annual_production (float): Repurposed production per month as fraction of annual. Default 2/12.
+        repurposed_annual_production (float): Repurposed production per month as
+            fraction of annual. Default 2/12.
 
     Returns:
         numpy.ndarray: Cumulative CADR per month, shape (months, n_simulations).
     """
     n_simulations = len(baseline_cadr)
-    monthly_cadr = np.zeros((months, n_simulations))
+    monthly_cadr = np.zeros((months + 1, n_simulations))
 
     # Month 0 (baseline)
     monthly_cadr[0] = baseline_cadr
 
     # Calculate growth for each month
-    for month in range(1, months):
+    for month in range(1, months + 1):
         # Calculate utilization factor
         if month <= utilization_ramp_months:
             utilization_factor = (
