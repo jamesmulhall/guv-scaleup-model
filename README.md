@@ -6,24 +6,6 @@ The model estimates how quickly global clean air delivery rate (CADR) can ramp u
 
 ---
 
-## What this model does
-
-- **Goal**: Estimate how quickly GUV and repurposed fluorescent lamps can ramp up to meet CADR needs for vital workers during a severe pandemic scenario.
-- **Core components**:
-  - **Monte Carlo sampling** of:
-    - Global markets for UV and fluorescent lamps.
-    - Usable fractions of those markets.
-    - Costs per unit and CADR per unit.
-  - **Scale-up dynamics** (`src/scale_up_model.py`):
-    - Factory utilization ramp-up.
-    - Additional production and (optional) repurposing.
-  - **Outputs**:
-    - Time series of CADR for UV and repurposed fluorescent lamps.
-    - Comparison to CADR requirements for vital workers.
-    - Summary CSV and publication-ready plot.
-
----
-
 ## Repository structure
 
 - **`src/`**
@@ -132,19 +114,6 @@ By default, the command-line analysis writes to the `results/` folder:
   - High-resolution figure (configured at **300 dpi** in the plotting utility) suitable for reports or papers.
 
 You can change filenames in the YAML config under the `outputs` section.
-
----
-
-## Testing
-
-- All tests live in the `tests/` directory and use **pytest**.
-- To run the test suite locally (with the environment activated):
-
-```bash
-pytest
-```
-
-GitHub Actions (`.github/workflows/testing.yml`) automatically run the tests on every push and pull request to `main`.
 
 ---
 
