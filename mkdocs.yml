@@ -1,12 +1,12 @@
-site_name: My Super Cool Respository
+site_name: GUV Scale-up Model
 
 
 # Repository
-repo_name: My Super Cool Respository
-repo_url: https://github.com/allfed/My Super-Cool-Respository
+repo_name: GUV Scale-up Model
+repo_url: https://github.com/jamesmulhall/guv-scaleup-model
 edit_uri: ""
 # Copyright
-copyright: Me
+copyright: James Mulhall
 
 docs_dir: "docs/sources"
 

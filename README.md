@@ -1,6 +1,6 @@
 ## GUV scale-up model
 
-<!-- [![DOI](https://zenodo.org/badge/520046482.svg)]() -->
+[![DOI](https://zenodo.org/badge/520046482.svg)]()
 ![Testing](https://github.com/jamesmulhall/guv_scaleup-model/actions/workflows/testing.yml/badge.svg?branch=main)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 

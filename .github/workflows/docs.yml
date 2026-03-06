@@ -14,6 +14,8 @@ jobs:
   build:
     name: Docs
     runs-on: ubuntu-latest
+    env:
+      MPLBACKEND: Agg
     strategy:
       matrix:
         python-version: ["3.12"]

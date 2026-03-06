@@ -1,2 +1,6 @@
 [flake8]
-max-line-length = 100
+max-line-length = 120
+ignore = F821, W503, E203, E226
+per-file-ignores = 
+    test_*.py:E402
+    tests/*.py:E402
