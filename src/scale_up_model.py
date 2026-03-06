@@ -13,6 +13,7 @@ def growth_model(
     global_market_usable,
     cost_per_unit,
     cadr_per_unit,
+    relative_cadr_ratio=1.0,
     months=6,
     utilization_start=0.7,
     utilization_end=1.0,
@@ -25,10 +26,11 @@ def growth_model(
     Model growth of CADR production over time with factory utilization ramp-up.
 
     Arguments:
-        baseline_cadr (array-like): Initial CADR values, shape (n_simulations,).
+        baseline_cadr (array-like): CADR from uv lamps in inventory, shape (n_simulations,).
         global_market_usable (array-like): Annual usable market size, shape (n_simulations,).
         cost_per_unit (array-like): Cost per unit, shape (n_simulations,).
         cadr_per_unit (array-like): CADR per unit, shape (n_simulations,).
+        relative_cadr_ratio (float): CADR ratio between pathogen and reference. Default 1.0.
         months (int): Number of months to model. Default 6.
         utilization_start (float): Starting utilization (0-1). Default 0.7.
         utilization_end (float): Ending utilization (0-1). Default 1.0.
@@ -44,6 +46,10 @@ def growth_model(
     """
     n_simulations = len(baseline_cadr)
     monthly_cadr = np.zeros((months + 1, n_simulations))
+
+    # Adjust cadr for specific pathogen
+    baseline_cadr = baseline_cadr * relative_cadr_ratio
+    cadr_per_unit = cadr_per_unit * relative_cadr_ratio
 
     # Month 0 (baseline)
     monthly_cadr[0] = baseline_cadr
@@ -85,6 +91,43 @@ def growth_model(
         monthly_cadr[month] = monthly_cadr[month - 1] + new_monthly_cadr
 
     return monthly_cadr
+
+
+def median_scaleup_curves_for_ratios(
+    baseline_cadr,
+    global_market_usable,
+    cost_per_unit,
+    cadr_per_unit,
+    ratios,
+    **kwargs,
+):
+    """
+    Run growth_model for each relative CADR ratio and return median CADR series per month.
+
+    Arguments:
+        baseline_cadr (array-like): CADR from uv lamps in inventory, shape (n_simulations,).
+        global_market_usable (array-like): Annual usable market size, shape (n_simulations,).
+        cost_per_unit (array-like): Cost per unit, shape (n_simulations,).
+        cadr_per_unit (array-like): CADR per unit, shape (n_simulations,).
+        ratios (sequence of float): Relative CADR ratios to run (e.g. [1.0, 0.66, 1.22]).
+        **kwargs: Passed through to growth_model (e.g. months, utilization_start, ...).
+
+    Returns:
+        list of numpy.ndarray: One median series per ratio, each shape (months + 1,).
+    """
+    result = []
+    for r in ratios:
+        monthly_cadr = growth_model(
+            baseline_cadr=baseline_cadr,
+            global_market_usable=global_market_usable,
+            cost_per_unit=cost_per_unit,
+            cadr_per_unit=cadr_per_unit,
+            relative_cadr_ratio=r,
+            **kwargs,
+        )
+        median_cadr, *_ = calculate_stats(monthly_cadr)
+        result.append(median_cadr)
+    return result
 
 
 def calculate_stats(monthly_cadr):

@@ -1,7 +1,18 @@
 ## GUV scale-up model
 
+<!-- [![DOI](https://zenodo.org/badge/520046482.svg)]() -->
+![Testing](https://github.com/jamesmulhall/guv_scaleup-model/actions/workflows/testing.yml/badge.svg?branch=main)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
+
 This repository contains a Monte Carlo scale-up model for **germicidal UV (GUV) lamps** and **repurposed fluorescent lamps**.  
 The model estimates how quickly global clean air delivery rate (CADR) can ramp up and compares it to CADR requirements for vital workers.
+
+![Ramp up plot](https://github.com/jamesmulhall/guv-scaleup-model/blob/main/results/uv_scaleup_5x_covid.png)
+
+---
+
+![Pathogen susceptibility plot](https://github.com/jamesmulhall/guv-scaleup-model/blob/main/results/uv_scaleup_by_pathogen.png)
 
 
 ---
@@ -116,6 +127,7 @@ By default, the command-line analysis writes to the `results/` folder:
 You can change filenames in the YAML config under the `outputs` section.
 
 ---
+
 
 ## Documentation
 
