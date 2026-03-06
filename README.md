@@ -1,7 +1,7 @@
 ## GUV scale-up model
 
 [![DOI](https://zenodo.org/badge/520046482.svg)]()
-![Testing](https://github.com/jamesmulhall/guv_scaleup-model/actions/workflows/testing.yml/badge.svg?branch=main)
+![Testing](https://github.com/jamesmulhall/guv-scaleup-model/actions/workflows/testing.yml/badge.svg?branch=main)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 
@@ -28,8 +28,6 @@ The model estimates how quickly global clean air delivery rate (CADR) can ramp u
   - **`estimate_scaleup.ipynb`**: Walkthrough notebook mirroring the main analysis step by step.
 - **`results/`**
   - Default output location for CSVs and figures produced by `run_analysis.py` and the notebook.
-- **`docs/`**
-  - MkDocs-based documentation (auto-generated via GitHub Actions when configured).
 
 ---
 
