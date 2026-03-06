@@ -6,7 +6,6 @@ cumulative growth, stats ordering, and median_scaleup_curves_for_ratios consiste
 """
 
 import numpy as np
-import pytest
 
 from src.scale_up_model import (
     growth_model,

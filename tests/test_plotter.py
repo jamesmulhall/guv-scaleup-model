@@ -60,11 +60,15 @@ class TestPlotUvFluoroRamp:
         uv, fluoro, cadr_req = _make_uv_fluoro_data(n_months=n_months, n_sims=10)
         fig, ax = plot_uv_fluoro_ramp(uv, fluoro, cadr_req, show=False, save_path=None)
         # One line per series; first line's x data length should match
-        lines = [l for l in ax.get_children() if hasattr(l, "get_xdata")]
+        lines = [
+            line for line in ax.get_children() if hasattr(line, "get_xdata")
+        ]  # noqa: F841
         # get_xdata() on Line2D; at least one line should have len n_months
-        line = ax.lines[0]
-        assert len(line.get_xdata()) == n_months
+        assert len(lines[0].get_xdata()) == n_months
         plt.close(fig)
+
+
+S
 
 
 class TestPlotMedianUvScaleupByCadrRatio:
