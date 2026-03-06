@@ -68,9 +68,6 @@ class TestPlotUvFluoroRamp:
         plt.close(fig)
 
 
-S
-
-
 class TestPlotMedianUvScaleupByCadrRatio:
     """plot_median_uv_scaleup_by_cadr_ratio return value, curves, optional requirement."""
 
