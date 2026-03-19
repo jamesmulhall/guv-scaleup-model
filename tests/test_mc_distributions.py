@@ -32,10 +32,16 @@ class TestSampleNormal:
             out = sample_normal(10.0, 20.0, n=10, confidence=conf)
             assert out.shape == (10,)
 
-    def test_samples_non_negative(self):
-        """Implementation uses abs(); all samples must be >= 0."""
-        out = sample_normal(0.0, 20.0, n=500)
+    def test_absolute_true_samples_non_negative(self):
+        """With absolute=True, all samples must be >= 0."""
+        out = sample_normal(0.0, 20.0, n=500, absolute=True)
         assert np.all(out >= 0)
+
+    def test_absolute_false_allows_negatives(self):
+        """With absolute=False (default), samples near zero can go negative."""
+        np.random.seed(0)
+        out = sample_normal(0.0, 20.0, n=500, absolute=False)
+        assert np.any(out < 0)
 
     def test_reproducibility_with_seed(self):
         """With same global seed, two calls give same samples."""
