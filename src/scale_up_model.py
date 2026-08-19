@@ -1,8 +1,8 @@
 """
 Scale-up model for CADR (Clean Air Delivery Rate) production over time.
 
-Models growth of germicidal UV and repurposed fluorescent lamp supply with
-utilization ramp-up and optional repurposing phase.
+Models growth of germicidal UV, far-UVC, and repurposed fluorescent lamp
+supply with utilization ramp-up and optional extra production phase.
 """
 
 import numpy as np
@@ -18,9 +18,9 @@ def growth_model(
     utilization_start=0.7,
     utilization_end=1.0,
     utilization_ramp_months=3,
-    additional_annual_production=1 / 12,
+    monthly_production_pct_of_annual=1 / 12,
     repurposed_ramp_months=1,
-    repurposed_annual_production=2 / 12,
+    repurposed_pct_of_annual=2 / 12,
 ):
     """
     Model growth of CADR production over time with factory utilization ramp-up.
@@ -35,11 +35,12 @@ def growth_model(
         utilization_start (float): Starting utilization (0-1). Default 0.7.
         utilization_end (float): Ending utilization (0-1). Default 1.0.
         utilization_ramp_months (int): Months over which utilization ramps up. Default 3.
-        additional_annual_production (float): Additional production per month as
-            fraction of annual. Default 1/12.
-        repurposed_ramp_months (int): Months over which repurposed production ramps up. Default 1.
-        repurposed_annual_production (float): Repurposed production per month as
-            fraction of annual. Default 2/12.
+        monthly_production_pct_of_annual (float): New production per month as a
+            fraction of annual market. Default 1/12.
+        repurposed_ramp_months (int): Months over which extra/repurposed
+            production ramps up. Default 1.
+        repurposed_pct_of_annual (float): Extra/repurposed production per month as
+            a fraction of annual market. Default 2/12.
 
     Returns:
         numpy.ndarray: Cumulative CADR per month, shape (months, n_simulations).
@@ -69,14 +70,16 @@ def growth_model(
 
         # Calculate new production for this month
         new_monthly_production = (
-            global_market_usable * additional_annual_production * utilization_factor
+            global_market_usable
+            * monthly_production_pct_of_annual
+            * utilization_factor
         )
         new_units = new_monthly_production / cost_per_unit
 
-        # Calculate repurposing
+        # Calculate extra / repurposed production
         if month <= repurposed_ramp_months:
             repurposed_factor = (
-                repurposed_annual_production * month / repurposed_ramp_months
+                repurposed_pct_of_annual * month / repurposed_ramp_months
             )
             repurposed_value = (
                 global_market_usable * repurposed_factor * utilization_factor

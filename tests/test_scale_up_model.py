@@ -58,9 +58,9 @@ class TestGrowthModel:
         out = growth_model(
             **kwargs,
             months=4,
-            additional_annual_production=0.0,
+            monthly_production_pct_of_annual=0.0,
             repurposed_ramp_months=0,
-            repurposed_annual_production=0.0,
+            repurposed_pct_of_annual=0.0,
         )
         for t in range(1, out.shape[0]):
             np.testing.assert_array_almost_equal(out[t], out[0])
@@ -91,13 +91,13 @@ class TestGrowthModel:
             **kwargs,
             months=6,
             repurposed_ramp_months=0,
-            repurposed_annual_production=0.0,
+            repurposed_pct_of_annual=0.0,
         )
         with_rep = growth_model(
             **kwargs,
             months=6,
             repurposed_ramp_months=2,
-            repurposed_annual_production=0.5 / 12,
+            repurposed_pct_of_annual=0.5 / 12,
         )
         assert np.all(with_rep[-1] >= no_rep[-1])
         assert np.any(with_rep[-1] > no_rep[-1])

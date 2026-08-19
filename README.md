@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 
-This repository contains a Monte Carlo scale-up model for **germicidal UV (GUV) lamps** and **repurposed fluorescent lamps**. The model estimates how quickly global clean air delivery rate (CADR) can ramp up and compares it to CADR requirements for vital workers.
+This repository contains a Monte Carlo scale-up model for **germicidal UV (GUV) lamps**, **far-UVC**, and **repurposed fluorescent lamps**. The model estimates how quickly global clean air delivery rate (CADR) can ramp up and compares it to CADR requirements for vital workers.
 
 ![Ramp up plot](https://github.com/jamesmulhall/guv-scaleup-model/blob/main/results/uv_scaleup_5x_covid.png)
 
@@ -21,7 +21,10 @@ This repository contains a Monte Carlo scale-up model for **germicidal UV (GUV) 
 - **`src/`**
   - **`mc_distributions.py`**: Monte Carlo sampling helpers (normal, lognormal, GPD).
   - **`scale_up_model.py`**: Growth model for CADR production over time.
+  - **`forecast.py`**: Multi-year forecast of 3-month CADR coverage as markets and demand change.
   - **`plotter.py`**: Plotting utilities for UV vs requirement ramp-up.
+- **`data/`**
+  - **`EssentialWorkersByCountry.csv`**: Country-level indoor vital and essential CADR requirements (from the in-room air filter scale-up analysis).
 - **`scripts/`**
   - **`estimate_scaleup.ipynb`**: Walkthrough notebook showing the main analysis step by step.
 - **`results/`**
@@ -82,8 +85,9 @@ You can run the model either via the **notebook** or via the **command-line entr
 
    - Sample parameters.
    - Compute baseline CADR.
-   - Run the growth model for UV and repurposed fluorescent lamps.
+   - Run the growth model for conventional UV, far-UVC, and repurposed fluorescent lamps.
    - Plot supply vs CADR requirement over time.
+   - Optionally forecast 3-month CADR coverage by year as fluorescents phase out.
 
 ---
 
