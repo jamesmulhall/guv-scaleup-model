@@ -162,9 +162,7 @@ def plot_uv_fluoro_ramp(
     )
 
     ax.set_xlabel("Month", fontsize=12, fontweight="bold")
-    ax.set_ylabel(
-        "% of Median Global CADR Requirement", fontsize=12, fontweight="bold"
-    )
+    ax.set_ylabel("% of Median Global CADR Requirement", fontsize=12, fontweight="bold")
     ax.set_title(title, fontsize=14, fontweight="bold", pad=20)
     ax.legend(loc="upper left", fontsize=10)
     if ylim is not None:

@@ -46,7 +46,12 @@ class TestPlotUvFluoroRamp:
         """Must return (fig, ax) tuple."""
         uv, fluoro, far_uvc, cadr_req = _make_uv_fluoro_data()
         fig, ax = plot_uv_fluoro_ramp(
-            uv, fluoro, cadr_req, far_uvc_monthly_cadr=far_uvc, show=False, save_path=None
+            uv,
+            fluoro,
+            cadr_req,
+            far_uvc_monthly_cadr=far_uvc,
+            show=False,
+            save_path=None,
         )
         assert fig is not None
         assert ax is not None
@@ -75,7 +80,12 @@ class TestPlotUvFluoroRamp:
             n_months=n_months, n_sims=10
         )
         fig, ax = plot_uv_fluoro_ramp(
-            uv, fluoro, cadr_req, far_uvc_monthly_cadr=far_uvc, show=False, save_path=None
+            uv,
+            fluoro,
+            cadr_req,
+            far_uvc_monthly_cadr=far_uvc,
+            show=False,
+            save_path=None,
         )
         # One line per series; first line's x data length should match
         lines = [
@@ -113,9 +123,7 @@ class TestPlotUvFluoroRamp:
         )
         assert "% of Median Global CADR Requirement" in ax.get_ylabel()
         dashed = [
-            line.get_ydata()[0]
-            for line in ax.lines
-            if line.get_linestyle() == "--"
+            line.get_ydata()[0] for line in ax.lines if line.get_linestyle() == "--"
         ]
         assert any(abs(y - 100.0) < 1e-9 for y in dashed)
         median_req = np.median(cadr_req)
@@ -262,4 +270,3 @@ class TestPlotForecastPctAtMonth:
         )
         assert path.exists()
         assert path.stat().st_size > 0
-

@@ -70,9 +70,7 @@ def growth_model(
 
         # Calculate new production for this month
         new_monthly_production = (
-            global_market_usable
-            * monthly_production_pct_of_annual
-            * utilization_factor
+            global_market_usable * monthly_production_pct_of_annual * utilization_factor
         )
         new_units = new_monthly_production / cost_per_unit
 

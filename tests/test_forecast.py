@@ -253,4 +253,3 @@ def test_forecast_pct_for_fluoro_indices_runs_each_scenario():
     np.testing.assert_allclose(series[0][0]["pct_fluoro"][1], 0.0)
     assert np.all(series[1][0]["pct_fluoro"][1] > 0)
     assert np.all(series[1][0]["pct_total"][1] > series[0][0]["pct_total"][1])
-

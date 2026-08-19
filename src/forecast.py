@@ -121,7 +121,9 @@ def biphasic_remaining_share(
     return np.clip(share, 0.0, 1.0)
 
 
-def demand_index_for_driver(years, base_year, driver, population_cagr, labour_force_cagr):
+def demand_index_for_driver(
+    years, base_year, driver, population_cagr, labour_force_cagr
+):
     """
     Demand index from either population or labour-force growth.
 
